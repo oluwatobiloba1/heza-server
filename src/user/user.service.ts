@@ -3,6 +3,7 @@ import { isEmail } from 'class-validator';
 import { UserRepo } from './user.repository';
 import { CreateUsertDto } from './dto/create-user.dto';
 import { IUser } from './schema/user.interface';
+import { Hash } from 'src/auth/utils/hashing';
 
 @Injectable()
 export class UserService {
@@ -27,7 +28,10 @@ export class UserService {
             );
         }
 
-        const newUser = await this.repo.createUser(createdUserDto);
+        const createUser = createdUserDto;
+        createUser.password = await Hash.hashPassword(createUser.password);
+
+        const newUser = await this.repo.createUser(createUser);
 
         if(!newUser) {
             throw new InternalServerErrorException('user not created');
