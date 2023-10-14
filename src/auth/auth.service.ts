@@ -1,18 +1,18 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { CreateUsertDto } from 'src/user/dto/create-user.dto';
 import { IUser } from 'src/user/schema/user.interface';
 import { User } from 'src/user/schema/user.schema';
 import { UserService } from 'src/user/user.service';
-import { GenerateToken } from './utils/token-generator';
 import { JwtService } from '@nestjs/jwt';
 import { TokenData } from './dto/token.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
     constructor(
       private userService: UserService, 
-      private generateToken: GenerateToken,
-      private jwtService: JwtService
+      private jwtService: JwtService,
+      private configService: ConfigService
       ) {}
 
   async login(email: string, pass: string): Promise<any> {
@@ -32,20 +32,19 @@ export class AuthService {
   async signup(dto: CreateUsertDto){
         const user = await this.userService.createUser(dto);
         if(!user) {
-            throw new UnauthorizedException('user not created');
+            throw new InternalServerErrorException('user not created');
         }
         const {password, ...newUser} = user;
 
-        const payload: Partial<TokenData> = {
-          username: newUser.email,
-          userId: newUser.id,
-          roles: newUser.role
+        const payload: any = {
+          sub: 'rapzter5@gmail.com',
         };
 
         console.log(newUser)
-        const token = await this.jwtService.signAsync({sub:payload}, {expiresIn: '30d'});
+        // const token = this.jwtService.sign(payload)
         
-        console.log(token)
-        return {message: 'user created successfully', email: newUser.email, token};
+        // const decoded = this.jwtService.verify(token, { secret: this.configService.get<string>('SECRET') });
+        // console.log(decoded);
+        return {message: 'user created successfully',};
   }
 }

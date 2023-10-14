@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { isEmail } from 'class-validator';
 import { UserRepo } from './user.repository';
 import { CreateUsertDto } from './dto/create-user.dto';
@@ -12,10 +12,10 @@ export class UserService {
     async findOne(key: string): Promise<any> {
         let user: any;
         if(isEmail(key)) {
-           user= await this.repo.findUserByEmail(key);
+           user= await this.repo.find({email: key});
         }
         else {
-            user = await this.repo.findUserById(key);
+            user = await this.repo.findById(key);
         }
         return user;
     }
@@ -23,7 +23,7 @@ export class UserService {
     async createUser(createdUserDto: CreateUsertDto): Promise<any> {
         const user = await this.findOne(createdUserDto.email);
         if (user) {
-            throw new BadRequestException(
+            throw new ConflictException(
                 'user with this email already exists',
             );
         }
@@ -31,7 +31,7 @@ export class UserService {
         const createUser = createdUserDto;
         createUser.password = await Hash.hashPassword(createUser.password);
 
-        const newUser = await this.repo.createUser(createUser);
+        const newUser = await this.repo.create(createUser);
 
         if(!newUser) {
             throw new InternalServerErrorException('user not created');

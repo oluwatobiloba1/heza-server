@@ -89,7 +89,7 @@ import {
   
     public async create(dto: CreateDto, options?: SaveOptions) {
       const createdUser = new this.model(dto);
-      return createdUser.save(options);
+      return await createdUser.save(options);
     }
   
     public async createMany(dto: CreateDto[], options?: InsertManyOptions) {

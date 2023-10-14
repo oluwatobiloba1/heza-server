@@ -5,7 +5,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export type UserDocument = HydratedDocument<User>;
 
-@Schema()
+@Schema({"toJSON":{getters:true}, "toObject":{getters:true}})
 export class User{
   @Prop()
   firstname: string
@@ -25,11 +25,11 @@ export class User{
   @Prop({enum: Roles, default: Roles.PATIENT})
   role: string;
 
-    @Prop()
-    phonenumber: string;
+  @Prop()
+  phonenumber: string;
 
-    @Prop({required:false})
-    imageUrl: string;
+  @Prop({required:false})
+  imageUrl: string;
 }
 
 export const UserSchemas = SchemaFactory.createForClass(User);

@@ -13,15 +13,17 @@ CreateUsertDto
         super(model);
     }
 
-    public async createUser(createUserDto: CreateUsertDto): Promise<User> {
-        const user = new this.model(createUserDto);
-        return await user.save();
-    }
+    
 
-    public async findUserByEmail(email: string): Promise<User> {
-        return this.model.findOne({ email }).exec();
-    }
-    public async findUserById(id: string): Promise<User> {
-        return this.model.findOne({ _id:id }).exec();
-    }
+    // public async createUser(createUserDto: CreateUsertDto) {
+    //     const user = this.create(createUserDto);
+    //     return user;
+    // }
+
+    // public async findUserByEmail(email: string): Promise<User> {
+    //     return this.model.findOne({ email }).exec();
+    // }
+    // public async findUserById(id: string): Promise<User> {
+    //     return this.model.findOne({ _id:id }).exec();
+    // }
 }
